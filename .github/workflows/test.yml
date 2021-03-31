@@ -1,6 +1,5 @@
 name: Test corsign-core
-on:
-  push
+on: push
 jobs:
   test:
     runs-on: ubuntu-latest
