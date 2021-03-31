@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.JWK
 import com.nimbusds.jose.jwk.KeyUse
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.{JWTClaimsSet, SignedJWT}
+import play.api.libs.json.Json
 
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -17,15 +18,7 @@ object JWTSigner {
 
     val signer = new RSASSASigner(rsaKey.nimbusJwk)
 
-    val claimsSet = new JWTClaimsSet.Builder()
-      .issuer(jwtClaims.iss)
-      .expirationTime(new Date(jwtClaims.exp))
-      .notBeforeTime(new Date(jwtClaims.nbf))
-      .issueTime(new Date(jwtClaims.iat))
-      .audience(jwtClaims.aud)
-      .claim("sub", jwtClaims.sub)
-      .claim("claims", jwtClaims.corData)
-      .build();
+    val claimsSet = jwtClaims.toNimbus
 
     val signedJWT = new SignedJWT(
       new JWSHeader.Builder(JWTAlgorithm.RS256.nimbusRepresentation).keyID(rsaKey.kid).build(),

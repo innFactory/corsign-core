@@ -16,6 +16,7 @@ lazy val core = project.in(file("core"))
   ),
   libraryDependencies ++=
     Seq(
+      "com.typesafe.play" %% "play-json" % "2.9.2",
       "com.github.kenglxn.qrgen" % "javase" % "2.6.0",
       "com.nimbusds"            % "nimbus-jose-jwt"         % "9.7",
       "com.outr" %% "hasher" % "1.2.2"

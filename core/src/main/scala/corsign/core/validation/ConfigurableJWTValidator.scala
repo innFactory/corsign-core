@@ -9,13 +9,13 @@ import corsign.core.jwt.JWTAlgorithm
 import corsign.core.jwt.JWTAlgorithm.RS256
 
 
-object ConfigurableJwtValidator {
+object ConfigurableJWTValidator {
   def apply(
              keySource: JWKSource[SecurityContext],
              algorithm: JWTAlgorithm = RS256,
              maybeCtx: Option[SecurityContext] = None,
              additionalValidations: List[(JWTClaimsSet, SecurityContext) => Option[BadJWTException]] = List.empty
-           ): ConfigurableJwtValidator = new ConfigurableJwtValidator(keySource, algorithm, maybeCtx, additionalValidations)
+           ): ConfigurableJWTValidator = new ConfigurableJWTValidator(keySource, algorithm, maybeCtx, additionalValidations)
 }
 
 /** A (fully?) configurable JwtValidator implementation.
@@ -27,12 +27,12 @@ object ConfigurableJwtValidator {
  * @param maybeCtx (Optional) Security context. Default is `null` (no Security Context).
  * @param additionalValidations (Optional) List of additional validations that will be executed on the JWT token. Default is an empty List.
  */
-final class ConfigurableJwtValidator(
+final class ConfigurableJWTValidator(
                                       keySource: JWKSource[SecurityContext],
                                       algorithm: JWTAlgorithm = RS256,
                                       maybeCtx: Option[SecurityContext] = None,
                                       additionalValidations: List[(JWTClaimsSet, SecurityContext) => Option[BadJWTException]] = List.empty
-                                    ) extends JwtValidator {
+                                    ) extends JWTValidator {
 
   // Set up a JWT processor to parse the tokens and then check their signature
   // and validity time window (bounded by the "iat", "nbf" and "exp" claims)

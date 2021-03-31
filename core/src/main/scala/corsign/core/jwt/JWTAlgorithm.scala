@@ -9,7 +9,6 @@ sealed trait JWTAlgorithm {
 }
 
 sealed trait JwtAsymmetricAlgorithm extends JWTAlgorithm {}
-
 sealed trait JwtHmacAlgorithm extends JWTAlgorithm {}
 sealed trait JwtRSAAlgorithm extends JwtAsymmetricAlgorithm {}
 

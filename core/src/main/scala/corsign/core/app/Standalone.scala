@@ -1,6 +1,7 @@
 package corsign.core.app
 
-import corsign.core.jwt.{CorData, JWTClaims, JWTSigner, Subject}
+import corsign.core.jwt.{JWTClaims, JWTSigner}
+import corsign.core.model.{CorData, Payload, Person}
 import corsign.core.rsa.RSAKey
 import corsign.core.validation.SimpleRSAValidator
 
@@ -10,30 +11,39 @@ import scala.concurrent.duration.DurationInt
 
 object Standalone extends App {
 
-  val key = RSAKey.generateNewRSAKey(UUID.randomUUID())
-  val key2 = RSAKey.generateNewRSAKey(UUID.randomUUID())
-  val ptn = List(
-  key.publicKeyPEM,
-  key.privateKeyPEM
-  )
+  val uuid = UUID.randomUUID()
+  println(s"Generating a new RSA key. $uuid")
+  val key = RSAKey.generateNewRSAKey(Some(uuid))
+
+  println("Private Key:")
+  println(key.privateKeyPEM)
+  println("Public Key:")
+  println(key.publicKeyPEM)
+
   val now          = Instant.now
   val validity     = Instant.now.plusMillis(2.hours.toMillis)
 
   val claims = JWTClaims(
+    UUID.randomUUID(),
     "issuer",
     "audience",
     validity.getEpochSecond,
     now.getEpochSecond,
     now.getEpochSecond,
-      Subject(UUID.randomUUID(), "firstname", "lastname"),
-    CorData(Some(true)),
+    Payload(Person(UUID.randomUUID(), "firstname", "lastname"),
+    CorData(Some(true))),
   )
 
   val token = JWTSigner.signWithRSA(claims, key)
-  println("-- --")
-  println(SimpleRSAValidator.validateWithRSA(token, key))
-  println("-- --")
+  println("Signed Token with this Key is:")
+  println(token)
+  println("Parsed Content from validated Token is")
+  println(SimpleRSAValidator.validateWithRSA(token, key).get)
+
+  println(key.jwkJsonString)
+
+  println("Now generating a QR Code")
 
 
-  ptn.foreach(println)
+
 }

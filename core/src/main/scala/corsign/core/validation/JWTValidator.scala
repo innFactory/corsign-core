@@ -16,6 +16,6 @@ case object InvalidTokenSubject                        extends ValidationError("
 case object InvalidAudienceClaim                       extends ValidationError("Invalid `aud` claim")
 case class UnknownException(exception: Exception)      extends ValidationError("Unknown JWT validation error")
 
-trait JwtValidator {
+trait JWTValidator {
   def validate(jwtToken: JwtToken): Either[BadJWTException, (JwtToken, JWTClaimsSet)]
 }

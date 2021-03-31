@@ -1,8 +1,9 @@
 package corsign.core.validation
 import com.nimbusds.jose.crypto.RSASSAVerifier
 import com.nimbusds.jwt.SignedJWT
+import corsign.core.jwt.JWTClaims
 
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 object SimpleRSAValidator {
 
   def validateWithRSA(token: String, rsaKey: corsign.core.rsa.RSAKey) = {
@@ -11,10 +12,10 @@ object SimpleRSAValidator {
     val verifier = new RSASSAVerifier(rsaPublicJWK)
     Try {
       if(signedJWT.verify(verifier))
-        Some(signedJWT) else None
+        Some(JWTClaims.fromNimbus(signedJWT)) else None
     } match {
       case Success(value) => value
-      case _ => None
+      case Failure(exception) => { println(exception); None }
     }
   }
 }

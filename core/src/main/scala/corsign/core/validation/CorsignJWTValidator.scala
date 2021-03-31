@@ -9,20 +9,20 @@ import corsign.core.jwk.JWKUrl
 import corsign.core.jwt.ProvidedValidations._
 
 
-object CorsignJwtValidator {
+object CorsignJWTValidator {
   def apply(
              url: JWKUrl
-           ): CorsignJwtValidator = new CorsignJwtValidator(url)
+           ): CorsignJWTValidator = new CorsignJWTValidator(url)
 }
 
-final class CorsignJwtValidator(url: JWKUrl) extends JwtValidator {
+final class CorsignJWTValidator(url: JWKUrl) extends JWTValidator {
 
   private val issuer = url.value
 
   private val jwkSet: JWKSource[SecurityContext] = new RemoteJWKSet(new URL(s"${url.value}/.well-known/jwks.json"))
 
   private val configurableJwtValidator =
-    new ConfigurableJwtValidator(
+    new ConfigurableJWTValidator(
       keySource = jwkSet,
       additionalValidations = List(
         requireExpirationClaim,
