@@ -2,11 +2,11 @@ package corsign.core.validation
 
 import java.security.KeyPair
 
-import com.nimbusds.jose.jwk.source.{ImmutableJWKSet, JWKSource}
+import com.nimbusds.jose.jwk.source.{ ImmutableJWKSet, JWKSource }
 import com.nimbusds.jose.proc.SecurityContext
 import org.scalacheck.Gen
 
-import com.nimbusds.jose.jwk.{JWK, JWKSet, RSAKey}
+import com.nimbusds.jose.jwk.{ JWK, JWKSet, RSAKey }
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.UUID

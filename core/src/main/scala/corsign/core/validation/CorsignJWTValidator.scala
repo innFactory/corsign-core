@@ -1,7 +1,7 @@
 package corsign.core.validation
 
 import java.net.URL
-import com.nimbusds.jose.jwk.source.{JWKSource, RemoteJWKSet}
+import com.nimbusds.jose.jwk.source.{ JWKSource, RemoteJWKSet }
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.BadJWTException
@@ -9,11 +9,10 @@ import corsign.core.jwk.JWKUrl
 import corsign.core.jwt.JWTClaims
 import corsign.core.jwt.ProvidedValidations._
 
-
 object CorsignJWTValidator {
   def apply(
-             url: JWKUrl
-           ): CorsignJWTValidator = new CorsignJWTValidator(url)
+    url: JWKUrl
+  ): CorsignJWTValidator = new CorsignJWTValidator(url)
 }
 
 final class CorsignJWTValidator(url: JWKUrl) extends JWTValidator {
@@ -28,7 +27,7 @@ final class CorsignJWTValidator(url: JWKUrl) extends JWTValidator {
       additionalValidations = List(
         requireExpirationClaim,
         requiredIssuerClaim(issuer),
-        requiredNonEmptySubject,
+        requiredNonEmptySubject
       )
     )
 

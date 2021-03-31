@@ -4,7 +4,6 @@ import net.glxn.qrgen.core.image.ImageType
 import net.glxn.qrgen.javase.QRCode
 import org.apache.commons.codec.binary.Base64
 
-
 case class B64QRCode() extends GenericQRCode[String] {
   def generate(qrInfo: QRData): String = {
     val prefix      = "data:image/png;base64,"

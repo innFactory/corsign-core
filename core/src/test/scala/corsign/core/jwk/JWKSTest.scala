@@ -12,7 +12,7 @@ class JWKSpec extends AnyWordSpec with Matchers {
   "#jwks" should {
     "be serialized to a json string with starts with a list of keys" in {
       val uuid = UUID.randomUUID()
-      val key = RSAKey.generateNewRSAKey(Some(uuid))
+      val key  = RSAKey.generateNewRSAKey(Some(uuid))
       val key2 = RSAKey.generateNewRSAKey(Some(uuid))
 
       val jwks = JWKS(List(key.jwkJson, key2.jwkJson))

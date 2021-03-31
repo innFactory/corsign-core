@@ -2,7 +2,7 @@ package corsign.core.model
 
 import play.api.libs.json.Json
 
-import java.util.{Date, UUID}
+import java.util.{ Date, UUID }
 
 case class Person(
   firstname: String,
@@ -20,7 +20,7 @@ case class Person(
 
 object Person {
   object Gender {
-    val MALE = "M"
+    val MALE   = "M"
     val FEMALE = "F"
     val DIVERS = "D"
   }

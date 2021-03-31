@@ -3,9 +3,10 @@ package corsign.core.model
 import play.api.libs.json.Json
 
 case class CorData(
-    isNegative: Option[Boolean] = None,
-    isVaccinated: Option[Boolean] = None,
-    vaccine: Option[String] = None
+  isNegative: Option[Boolean] = None,
+  isVaccinated: Option[Boolean] = None,
+  vaccine: Option[String] = None,
+  appData: Option[String] = None
 )
 
 object CorData {

@@ -1,31 +1,29 @@
 package corsign.core.app
 // $COVERAGE-OFF$
-import corsign.core.jwt.{JWTClaims, JWTSigner}
+import corsign.core.jwt.{ JWTClaims, JWTSigner }
 import corsign.core.model.Person.Gender.MALE
-import corsign.core.model.{CorData, Payload, Person}
-import corsign.core.qr.{B64QRCode, QRData}
+import corsign.core.model.{ CorData, Payload, Person }
+import corsign.core.qr.{ B64QRCode, QRData }
 import corsign.core.rsa.RSAKey
 import corsign.core.validation.SimpleRSAValidator
 
 import java.time.Instant
-import java.util.{Date, UUID}
+import java.util.{ Date, UUID }
 import scala.concurrent.duration.DurationInt
-
 
 object Standalone extends App {
 
   val uuid = UUID.randomUUID()
   println(s"Generating a new RSA key. $uuid")
-  val key = RSAKey.generateNewRSAKey(Some(uuid))
+  val key  = RSAKey.generateNewRSAKey(Some(uuid))
 
   println("Public Key:")
   println(key.publicKeyPEM)
 
+  val now      = Instant.now
+  val validity = Instant.now.plusMillis(2.hours.toMillis)
 
-  val now          = Instant.now
-  val validity     = Instant.now.plusMillis(2.hours.toMillis)
-
-  val person = Person(
+  val person  = Person(
     firstname = "Max",
     lastname = "Mustermann",
     gender = Some(MALE),
@@ -36,7 +34,7 @@ object Standalone extends App {
     address = Some("Bahnhofstraße 1"),
     zip = Some("83022"),
     city = Some("Rosenheim"),
-    country = Some("Germany"),
+    country = Some("Germany")
   )
   val corData = CorData(isNegative = Some(true))
 
@@ -47,7 +45,7 @@ object Standalone extends App {
     validity.getEpochSecond,
     now.getEpochSecond,
     now.getEpochSecond,
-    Payload(person, corData),
+    Payload(person, corData)
   )
 
   val token = JWTSigner.signWithRSA(claims, key)
@@ -65,7 +63,6 @@ object Standalone extends App {
 
   println("\nPrivate Key Hash for Signing Endpoint")
   println(key.privateKeySHA512)
-
 
   println("\n\nNow generating a QR Code")
 

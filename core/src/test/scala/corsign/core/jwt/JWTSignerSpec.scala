@@ -1,7 +1,7 @@
 package corsign.core.jwt
 
-import corsign.core.app.Standalone.{key, token}
-import corsign.core.model.{CorData, Payload, Person}
+import corsign.core.app.Standalone.{ key, token }
+import corsign.core.model.{ CorData, Payload, Person }
 import corsign.core.model.Person.Gender.MALE
 import corsign.core.rsa.RSAKey
 import corsign.core.validation.SimpleRSAValidator
@@ -11,16 +11,15 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import java.time.Instant
-import java.util.{Date, UUID}
-
+import java.util.{ Date, UUID }
 
 class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
   import JWTClaims._
 
-  val now          = Instant.now
-  val validity     = Instant.now.plusMillis(2.hours.toMillis)
+  val now      = Instant.now
+  val validity = Instant.now.plusMillis(2.hours.toMillis)
 
-  val person = Person(
+  val person  = Person(
     firstname = "Max",
     lastname = "Mustermann",
     gender = Some(MALE),
@@ -31,7 +30,7 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
     address = Some("Bahnhofstraße 1"),
     zip = Some("83022"),
     city = Some("Rosenheim"),
-    country = Some("Germany"),
+    country = Some("Germany")
   )
   val corData = CorData(isNegative = Some(true))
 
@@ -39,7 +38,7 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
 
     "should sign a JWTToken" in {
       val uuid = UUID.randomUUID()
-      val key = RSAKey.generateNewRSAKey(Some(uuid))
+      val key  = RSAKey.generateNewRSAKey(Some(uuid))
 
       val claims = JWTClaims(
         UUID.randomUUID(),
@@ -48,7 +47,7 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
         validity.getEpochSecond,
         now.getEpochSecond,
         now.getEpochSecond,
-        Payload(person, corData),
+        Payload(person, corData)
       )
 
       val token = JWTSigner.signWithRSA(claims, key)
@@ -57,18 +56,24 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
 
     "should sign a JWTToken and validate with public key" in {
       val uuid = UUID.randomUUID()
-      val key = RSAKey.generateNewRSAKey(Some(uuid))
+      val key  = RSAKey.generateNewRSAKey(Some(uuid))
 
       val personID = UUID.randomUUID()
-      val issuer = "issuer"
+      val issuer   = "issuer"
       val audience = "audience"
-      val exp = validity.getEpochSecond
-      val nbf = now.getEpochSecond
-      val iat = now.getEpochSecond
-      val payload = Payload(person, corData)
+      val exp      = validity.getEpochSecond
+      val nbf      = now.getEpochSecond
+      val iat      = now.getEpochSecond
+      val payload  = Payload(person, corData)
 
       val claims = JWTClaims(
-        personID,issuer,audience,exp, nbf,iat,payload
+        personID,
+        issuer,
+        audience,
+        exp,
+        nbf,
+        iat,
+        payload
       )
 
       val token = JWTSigner.signWithRSA(claims, key)
@@ -88,41 +93,53 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
 
     "should sign a JWTToken with RS384 and validate with public key" in {
       val uuid = UUID.randomUUID()
-      val key = RSAKey.generateNewRSAKey(Some(uuid))
+      val key  = RSAKey.generateNewRSAKey(Some(uuid))
 
       val personID = UUID.randomUUID()
-      val issuer = "issuer"
+      val issuer   = "issuer"
       val audience = "audience"
-      val exp = validity.getEpochSecond
-      val nbf = now.getEpochSecond
-      val iat = now.getEpochSecond
-      val payload = Payload(person, corData)
+      val exp      = validity.getEpochSecond
+      val nbf      = now.getEpochSecond
+      val iat      = now.getEpochSecond
+      val payload  = Payload(person, corData)
 
       val claims = JWTClaims(
-        personID, issuer, audience, exp, nbf, iat, payload
+        personID,
+        issuer,
+        audience,
+        exp,
+        nbf,
+        iat,
+        payload
       )
 
-      val token = JWTSigner.signWithRSA(claims, key, JWTAlgorithm.fromString("RS384").asInstanceOf[JwtRSAAlgorithm])
+      val token      = JWTSigner.signWithRSA(claims, key, JWTAlgorithm.fromString("RS384").asInstanceOf[JwtRSAAlgorithm])
       val validation = SimpleRSAValidator.validateWithRSA(token.get, key)
       validation.isDefined shouldBe true
     }
     "should sign a JWTToken with RS256 and validate with public key" in {
       val uuid = UUID.randomUUID()
-      val key = RSAKey.generateNewRSAKey(Some(uuid))
+      val key  = RSAKey.generateNewRSAKey(Some(uuid))
 
       val personID = UUID.randomUUID()
-      val issuer = "issuer"
+      val issuer   = "issuer"
       val audience = "audience"
-      val exp = validity.getEpochSecond
-      val nbf = now.getEpochSecond
-      val iat = now.getEpochSecond
-      val payload = Payload(person, corData)
+      val exp      = validity.getEpochSecond
+      val nbf      = now.getEpochSecond
+      val iat      = now.getEpochSecond
+      val payload  = Payload(person, corData)
 
       val claims = JWTClaims(
-        personID, issuer, audience, exp, nbf, iat, payload
+        personID,
+        issuer,
+        audience,
+        exp,
+        nbf,
+        iat,
+        payload
       )
 
-      val token = JWTSigner.signWithRSA(claims, key, JWTAlgorithm.fromString("RS256").asInstanceOf[JwtRSAAlgorithm])
+      val token      = JWTSigner.signWithRSA(claims, key, JWTAlgorithm.fromString("RS256").asInstanceOf[JwtRSAAlgorithm])
       val validation = SimpleRSAValidator.validateWithRSA(token.get, key)
       validation.isDefined shouldBe true
     }

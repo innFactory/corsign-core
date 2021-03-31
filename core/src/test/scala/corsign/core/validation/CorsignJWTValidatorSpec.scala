@@ -9,9 +9,8 @@ class CorsignJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaCheckP
 
   "#validate" should {
     "should create a custom" in {
-      val correctlyConfiguredValidator = {
+      val correctlyConfiguredValidator =
         CorsignJWTValidator(JWKUrl("http://localhost"))
-      }
     }
   }
 }
