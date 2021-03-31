@@ -1,8 +1,82 @@
-## Corsign JWT Core
+## Corona Signing Tokens (Corsign)
 
-### Was ist Corsign?
-Corona Signing kurz Corsign ist ein Möglichkeit notwendige Coronarelevante Daten innerhalb eines Signierten QR Codes zu speichern
+### What is Corsign?
+Corona Signing or Corsign is a method to store all covid19 relevant data inside of an signed qr code which can be used by any application. The signer in this case would not need to store any personal information inside the signing system.
+Because of the open JWT Format the result can be interpreted in ANY covid19 related app. The cryptographic methods are all open source and battle proofed.
 
+I have written about this idea on LinkedIn. Call or Write me if you have ideas for the model or the implementation.
+
+https://www.linkedin.com/pulse/konzept-einer-zentralen-signaturstelle-f%25C3%25BCr-das-freitesten-jonas/
+
+### The Corsign Token
+
+Corsign extends the default JWT Claims with a field called pld (= "payload") which contains a json structure with person data and covid19 or app relevant data.
+An example (from the Standalone app looks like this):
+
+```
+{
+  "kid": "d8cf847b-9eac-47e5-975a-e6cc87790db6",
+  "alg": "RS512"
+}
+{
+  "sub": "1d32bce5-f0fb-483b-b389-c97af0fd4ff7",
+  "aud": "audience",
+  "nbf": 1617219803,
+  "iss": "issuer",
+  "pld": {
+    "person": {
+      "birthday": 1617219803996,
+      "zip": "83022",
+      "country": "Germany",
+      "firstname": "Max",
+      "phoneNumber": "0803199999",
+      "address": "Bahnhofstraße 1",
+      "gender": "M",
+      "city": "Rosenheim",
+      "idCardNumber": "LFC123ABC",
+      "email": "meine@mail.de",
+      "lastname": "Mustermann"
+    },
+    "information": {
+      "isNegative": true
+    }
+  },
+  "exp": 1617227003,
+  "iat": 1617219803
+}
+```
+
+The following list shows all possible fields. Most of them are optional. Please open github ticket if you think a field is missing or should be required.
+
+```
+"sub": "uuid for the person, which can be used to identify the person in a third-party app or in SORMAS until a new Test is done",
+"exp": "The token expires after the covid19 test time is longer than a given value. e.g 24h",
+"iat": "Covid19 Test time",
+"nbf": "Valid not before Covid19 test time",
+"aud": "place for the signer, can be used to tell a third party app more informations"
+"pld": {
+    "person": {
+      "birthday": timestamp in milliseconds,
+      "zip": "zip code",
+      "country": "Germany",
+      "firstname": "Max *required",
+      "phoneNumber": "0803199999",
+      "address": "Bahnhofstraße 1",
+      "gender": "M",
+      "city": "Rosenheim",
+      "idCardNumber": "LFC123ABC",
+      "email": "meine@mail.de",
+      "lastname": "Mustermann *required"
+      "country": "de"
+    },
+    "information": {
+      "isNegative": true,
+      "isVaccinated": true|false,
+      "vaccine": "Shortname of the vaccines like BNT162b2|mRNA-1273|..."
+      "appData"
+    }
+  },
+```
 
 ### QuickStart
 
@@ -47,6 +121,21 @@ Process finished with exit code 0
 
 ```
 
-The generated QR Code contains a signed QR Code which is redirected to a local url. If the url get's opened by the camera the webapp is loaded. If the QR is scanned by any other tracing app, the app can self verify the data and use the CorSign Model data which is written in Token field pld (payload)
+The generated QR Code contains a signed JWT Token, which is redirected to a local url. Right now we are building a server extension so that the corsign model can be validated under corsign.de/v1/validation/:token.
+This service will also manage all keys for customers and stores them encrypted with AES256. You must provide the SHA512 hash of the private key to decrypt the keys and sign your request.
 
-<img src="data:image/png;base64,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">
+![signed qr ](doc/sample-qr-code.png "Signed QR Code")
+
+So if you now scan the QR Code you'll get redirected to a local page (subfolder: validation-ui) which generates one of the following result:
+
+Negativ gescannte Person in der Beispiel WebApp             |  Positiv gescannte Person
+:-------------------------:|:-------------------------:
+![valid signed qr ](doc/valid.png "Valid QR Code") | ![invalid signed qr ](doc/invalid.png "Invalid QR Code")
+
+Because of the open data, any QR Code Reader can parse the content and split the data from the /validation/ inside of the url. After that the token can be used in any application like SORMAS, Luca App, Corona Warn App and many more. We also plan to provide a reference implementation of a tracing and a teststation app. For the teststation use case we'll use our product [CoTeMa](https://innfactory.de/products/cotema-corona-terminvereinbarung/terminvereinbarungssoftware-fuer-corona-teststationen-und-impfzentren-impfzentren-software?utm_source=github&utm_medium=web&utm_campaign=redirect) which was originally developed for the rosenheim covid19 teststation and then adapted for vaccination process.
+
+### Corsign.de
+Corsign.de will be an software as a service extensions for governments which is hosted by [innFactory GmbH](https://innfactory.de]. On-Prem usage will also be possible with docker.
+
+### Credits
+- [Tobias Jonas @ innFactory](https://innfactory.de)
