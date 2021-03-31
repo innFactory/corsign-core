@@ -22,7 +22,10 @@ lazy val core = project
         "com.github.kenglxn.qrgen" % "javase"          % "2.6.0",
         "com.nimbusds"             % "nimbus-jose-jwt" % "9.7",
         "org.bouncycastle"         % "bcpkix-jdk15on"  % "1.68",
-        "commons-codec"            % "commons-codec"   % "1.15"
+        "commons-codec"            % "commons-codec"   % "1.15",
+        "org.scalacheck"         %% "scalacheck"              % "1.15.2"  % Test,
+        "org.scalatest"          %% "scalatest"               % "3.2.6"   % Test,
+        "org.scalatestplus"      %% "scalacheck-1-14"         % "3.2.2.0" % Test
       )
   )
 
