@@ -5,7 +5,7 @@ import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.{JWSVerificationKeySelector, SecurityContext}
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.{BadJWTException, DefaultJWTClaimsVerifier, DefaultJWTProcessor}
-import corsign.core.jwt.JWTAlgorithm
+import corsign.core.jwt.{JWTAlgorithm, JWTClaims}
 import corsign.core.jwt.JWTAlgorithm.RS256
 
 
@@ -60,8 +60,8 @@ final class ConfigurableJWTValidator(
 
   private val ctx: SecurityContext = maybeCtx.orNull
 
-  override def validate(jwtToken: JwtToken): Either[BadJWTException, (JwtToken, JWTClaimsSet)] = {
-    val content: String = jwtToken.content
+  override def validate(jwtToken: JWTToken): Either[BadJWTException, (JWTToken, JWTClaimsSet)] = {
+    val content: String = jwtToken.value
     if (content.isEmpty) Left(EmptyJwtTokenContent)
     else
       try {

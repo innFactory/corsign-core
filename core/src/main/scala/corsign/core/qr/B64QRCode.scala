@@ -1,6 +1,5 @@
 package corsign.core.qr
 
-import corsign.core.jwt.JWTBase64
 import net.glxn.qrgen.core.image.ImageType
 import net.glxn.qrgen.javase.QRCode
 import org.apache.commons.codec.binary.Base64
@@ -13,6 +12,7 @@ case class B64QRCode() extends GenericQRCode[String] {
       QRCode
         .from(qrInfo.url)
         .to(ImageType.PNG)
+        .withColor(qrInfo.onColor, qrInfo.offColor)
         .withSize(qrInfo.width, qrInfo.height)
         .withCharset("UTF-8")
         .stream()

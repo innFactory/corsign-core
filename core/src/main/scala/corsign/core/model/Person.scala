@@ -16,12 +16,15 @@ case class Person(
   zip: Option[String] = None,
   city: Option[String] = None,
   country: Option[String] = None
-) extends JsonSerializeable {
-
-  def toJson = Json.toJson(this)(Person.writes)
-}
+)
 
 object Person {
+  object Gender {
+    val MALE = "M"
+    val FEMALE = "F"
+    val DIVERS = "D"
+  }
+
   implicit val reads  = Json.reads[Person]
   implicit val writes = Json.writes[Person]
 }

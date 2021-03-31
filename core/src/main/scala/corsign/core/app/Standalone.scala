@@ -1,6 +1,7 @@
 package corsign.core.app
-
+// $COVERAGE-OFF$
 import corsign.core.jwt.{JWTClaims, JWTSigner}
+import corsign.core.model.Person.Gender.MALE
 import corsign.core.model.{CorData, Payload, Person}
 import corsign.core.qr.{B64QRCode, QRData}
 import corsign.core.rsa.RSAKey
@@ -27,7 +28,7 @@ object Standalone extends App {
   val person = Person(
     firstname = "Max",
     lastname = "Mustermann",
-    gender = Some("M"),
+    gender = Some(MALE),
     birthday = Some(Date.from(Instant.now())),
     phoneNumber = Some("0803199999"),
     email = Some("meine@mail.de"),
@@ -53,7 +54,7 @@ object Standalone extends App {
   println("\nSigned Token with this Key is:")
   println(token)
   println("\nParsed Content from validated Token is")
-  println(SimpleRSAValidator.validateWithRSA(token, key).get)
+  println(SimpleRSAValidator.validateWithRSA(token.get, key).get)
 
   println(key.jwkJson.toString())
 
@@ -68,6 +69,7 @@ object Standalone extends App {
 
   println("\n\nNow generating a QR Code")
 
-  val url = s"http://localhost:5000/v1/validate/$token"
+  val url = s"http://localhost:5000/v1/validate/${token.get.value}"
   println(B64QRCode().generate(QRData(url)))
 }
+// $COVERAGE-ON$

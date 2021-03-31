@@ -3,7 +3,7 @@ package corsign.core.validation
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.BadJWTException
 
-final case class JwtToken(content: String) extends AnyVal
+final case class JWTToken(value: String) extends AnyVal
 
 sealed abstract class ValidationError(message: String) extends BadJWTException(message)
 case object EmptyJwtTokenContent                       extends ValidationError("Empty JWT token")
@@ -17,5 +17,5 @@ case object InvalidAudienceClaim                       extends ValidationError("
 case class UnknownException(exception: Exception)      extends ValidationError("Unknown JWT validation error")
 
 trait JWTValidator {
-  def validate(jwtToken: JwtToken): Either[BadJWTException, (JwtToken, JWTClaimsSet)]
+  def validate(jwtToken: JWTToken): Either[BadJWTException, (JWTToken, JWTClaimsSet)]
 }

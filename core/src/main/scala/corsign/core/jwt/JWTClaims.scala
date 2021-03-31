@@ -28,15 +28,14 @@ case class JWTClaims(
       .issueTime(new Date(1000 * iat))
       .audience(aud)
       .claim("pld",
-        JSONObjectUtils.parse(payload.toJson.toString()))
+        JSONObjectUtils.parse(Json.toJson(payload).toString()))
       .build();
 }
 
 
 object JWTClaims {
 
-  def fromNimbus(njwt: SignedJWT): JWTClaims = {
-    val claims = njwt.getJWTClaimsSet
+  implicit def fromNimbusClaimSet(claims: JWTClaimsSet): JWTClaims = {
     val json = Json.parse(Try(new JSONObject(claims.getJSONObjectClaim("pld")).toJSONString) match {
       case Success(value) => value
       case Failure(_) => "{}"
@@ -46,11 +45,17 @@ object JWTClaims {
       UUID.fromString(claims.getSubject),
       claims.getIssuer,
       claims.getAudience.get(0),
-      claims.getExpirationTime.getTime,
-      claims.getNotBeforeTime.getTime,
-      claims.getIssueTime.getTime,
+      claims.getExpirationTime.getTime / 1000,
+      claims.getNotBeforeTime.getTime / 1000,
+      claims.getIssueTime.getTime / 1000,
       json
     )
+  }
+
+
+  def fromNimbus(njwt: SignedJWT): JWTClaims = {
+    val claims = njwt.getJWTClaimsSet
+    fromNimbusClaimSet(claims)
   }
 
   implicit val reads  = Json.reads[JWTClaims]

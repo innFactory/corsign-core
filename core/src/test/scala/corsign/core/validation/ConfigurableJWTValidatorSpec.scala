@@ -1,27 +1,23 @@
 package corsign.core.validation
 
-import java.security.{KeyPair, KeyPairGenerator}
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.Date
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jose.{JWSAlgorithm, JWSHeader}
 import com.nimbusds.jwt.proc.BadJWTException
 import com.nimbusds.jwt.{JWTClaimsSet, SignedJWT}
-import corsign.core.jwt.ProvidedValidations.requireAudience
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
+import java.security.{KeyPair, KeyPairGenerator}
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.Date
 import scala.util.Either
 
-/** Some parts of these tests code is inspired and/or copy/paste from Nimbus tests code, here:
- *
- * https://bitbucket.org/connect2id/nimbus-jose-jwt/src/15adaae86cf7d8492ce02b02bfc07166f05c03d9/src/test/java/com/nimbusds/jwt/proc/DefaultJWTProcessorTest.java?at=master&fileviewer=file-view-default
- *
- * Thanks to them for their work.
+/**
+ * Some parts of these tests code is inspired and/or copy/paste from Nimbus tests code. The Base of this Validator Spec comes from an Open Source implementation of JWK Validation.
  */
 class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
 
@@ -38,7 +34,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
     "when the JSON Web Token is an empty String" should {
       "returns Left(EmptyJwtTokenContent)" in {
         forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
-          val token     = JwtToken(content = "")
+          val token     = JWTToken(value = "")
           val validator = ConfigurableJWTValidator(jwkSource)
           validator.validate(token) shouldBe Left(EmptyJwtTokenContent)
         }
@@ -48,7 +44,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
     "when the JWT is invalid" should {
       "returns Left(InvalidJwtToken)" in {
         forAll(jwkSourceGen(keyPair), nonEmptyStringGen) { (jwkSource: JWKSource[SecurityContext], randomString: String) =>
-          val token     = JwtToken(content = randomString)
+          val token     = JWTToken(value = randomString)
           val validator = ConfigurableJWTValidator(jwkSource)
           validator.validate(token) shouldBe Left(InvalidJwtToken)
         }
@@ -64,7 +60,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
             val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").expirationTime(yesterday).build
             val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
             jwt.sign(new RSASSASigner(keyPair.getPrivate))
-            val token = JwtToken(content = jwt.serialize())
+            val token = JWTToken(value = jwt.serialize())
 
             forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
               val res = ConfigurableJWTValidator(jwkSource).validate(token)
@@ -79,7 +75,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
             val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").expirationTime(tomorrow).build
             val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
             jwt.sign(new RSASSASigner(keyPair.getPrivate))
-            val token = JwtToken(content = jwt.serialize())
+            val token = JWTToken(value = jwt.serialize())
 
             forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
               val res = ConfigurableJWTValidator(jwkSource).validate(token)
@@ -95,7 +91,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
             val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").build
             val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
             jwt.sign(new RSASSASigner(keyPair.getPrivate))
-            val token = JwtToken(content = jwt.serialize())
+            val token = JWTToken(value = jwt.serialize())
 
             forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
               val correctlyConfiguredValidator = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requireExpirationClaim))
@@ -119,7 +115,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
               val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").expirationTime(yesterday).build
               val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
               jwt.sign(new RSASSASigner(keyPair.getPrivate))
-              val token = JwtToken(content = jwt.serialize())
+              val token = JWTToken(value = jwt.serialize())
 
               forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
                 val correctlyConfiguredValidator = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requireExpirationClaim))
@@ -136,7 +132,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
               val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").expirationTime(tomorrow).build
               val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
               jwt.sign(new RSASSASigner(keyPair.getPrivate))
-              val token = JwtToken(content = jwt.serialize())
+              val token = JWTToken(value = jwt.serialize())
 
               forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
                 val correctlyConfiguredValidator = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requireExpirationClaim))
@@ -158,7 +154,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims   = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").build
           val jwt      = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -178,7 +174,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims   = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").build
           val jwt      = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -198,7 +194,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims   = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("alice").claim("token_use", tokenUse).build
           val jwt      = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -218,7 +214,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().subject("alice").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -238,7 +234,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().issuer(issuer).subject("alice").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -258,7 +254,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().issuer(issuer).subject("alice").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val res = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requiredIssuerClaim(issuer))).validate(token)
@@ -275,7 +271,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requiredNonEmptySubject))
@@ -296,7 +292,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requiredNonEmptySubject))
@@ -314,7 +310,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").subject("Jules").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val res = ConfigurableJWTValidator(jwkSource, additionalValidations = List(requiredNonEmptySubject)).validate(token)
@@ -331,7 +327,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
           val claims = new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").build
           val jwt    = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -354,7 +350,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
             new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").audience("valid_audience_1").audience("valid_audience_2").build
           val jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val correctlyConfiguredValidator =
@@ -374,7 +370,7 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
             new JWTClaimsSet.Builder().issuer("https://openid.c2id.com").audience("valid_audience_1").audience("valid_audience_2").build
           val jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claims)
           jwt.sign(new RSASSASigner(keyPair.getPrivate))
-          val token = JwtToken(content = jwt.serialize())
+          val token = JWTToken(value = jwt.serialize())
 
           forAll(jwkSourceGen(keyPair)) { jwkSource: JWKSource[SecurityContext] =>
             val res =

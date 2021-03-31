@@ -32,3 +32,5 @@ lazy val core = project
 lazy val corsign = project
   .in(file("."))
   .dependsOn(core)
+
+addCommandAlias("coreTest",";project core; clean; coverage ;test ;coverageReport")

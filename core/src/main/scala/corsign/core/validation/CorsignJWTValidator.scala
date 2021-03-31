@@ -6,6 +6,7 @@ import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.BadJWTException
 import corsign.core.jwk.JWKUrl
+import corsign.core.jwt.JWTClaims
 import corsign.core.jwt.ProvidedValidations._
 
 
@@ -31,6 +32,9 @@ final class CorsignJWTValidator(url: JWKUrl) extends JWTValidator {
       )
     )
 
-  override def validate(jwtToken: JwtToken): Either[BadJWTException, (JwtToken, JWTClaimsSet)] =
+  override def validate(jwtToken: JWTToken): Either[BadJWTException, (JWTToken, JWTClaimsSet)] =
     configurableJwtValidator.validate(jwtToken)
+
+  def validateForCorsignClaims(jwtToken: JWTToken): Either[BadJWTException, (JWTToken, JWTClaims)] =
+    validate(jwtToken).map(t => (t._1, JWTClaims.fromNimbusClaimSet(t._2)))
 }

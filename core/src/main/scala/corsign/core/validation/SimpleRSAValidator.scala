@@ -6,9 +6,9 @@ import corsign.core.jwt.JWTClaims
 import scala.util.{Failure, Success, Try}
 object SimpleRSAValidator {
 
-  def validateWithRSA(token: String, rsaKey: corsign.core.rsa.RSAKey) = {
+  def validateWithRSA(jwt: JWTToken, rsaKey: corsign.core.rsa.RSAKey) = {
     val rsaPublicJWK = rsaKey.jwkNimbus.toPublicJWK();
-    val signedJWT = SignedJWT.parse(token)
+    val signedJWT = SignedJWT.parse(jwt.value)
     val verifier = new RSASSAVerifier(rsaPublicJWK)
     Try {
       if(signedJWT.verify(verifier))
