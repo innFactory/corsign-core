@@ -7,7 +7,7 @@ import scala.util.{Failure, Success, Try}
 object SimpleRSAValidator {
 
   def validateWithRSA(token: String, rsaKey: corsign.core.rsa.RSAKey) = {
-    val rsaPublicJWK = rsaKey.nimbusJwk.toPublicJWK();
+    val rsaPublicJWK = rsaKey.jwkNimbus.toPublicJWK();
     val signedJWT = SignedJWT.parse(token)
     val verifier = new RSASSAVerifier(rsaPublicJWK)
     Try {

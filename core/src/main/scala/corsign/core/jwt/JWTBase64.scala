@@ -11,7 +11,7 @@ object JWTBase64 {
   def encode(value: String): Array[Byte] = encode(JWTUtils.bytify(value))
   def decode(value: String): Array[Byte] = decoder.decode(value)
 
-  def encodeString(value: Array[Byte]): String = encoder.encodeToString(value).replaceAll("=", "")
+  def encodeString(value: Array[Byte]): String = encoder.encodeToString(value)
   def decodeString(value: Array[Byte]): String = JWTUtils.stringify(decode(value))
 
   def encodeString(value: String): String = encodeString(JWTUtils.bytify(value))
