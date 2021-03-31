@@ -1,0 +1,6 @@
+@import "@carbon/themes/scss/themes";
+@import "./theme.scss";
+
+:root[theme="demo"] {
+  @include carbon--theme($carbon--theme--demo, true);
+}
