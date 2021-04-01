@@ -1,19 +1,19 @@
 ## Corona Signing Tokens (Corsign)
 
 ### What is Corsign?
-Corona Signing or Corsign is a method to store all covid19 relevant data inside of an signed qr code which can be used by any application. The signer in this case would not need to store any personal information inside the signing system.
-Because of the open JWT Format the result can be interpreted in ANY covid19 related app. The cryptographic methods are all open source and battle proofed.
+Corona Signing or Corsign is a method of storing all Covid-19 relevant data inside of a signed QR-Code which can be used by any application. The signer in this case would not need to store any personal information inside the signing system.
+Because of the open JWT format, the result can be interpreted in ANY Covid-19 related app. The cryptographic methods behind the token signing process are all open source and battle proof.
 
-I have written about this idea on LinkedIn. Call or Write me if you have ideas for the model or the implementation.
+I have written about this idea on LinkedIn. Don't hesitate to call or write about any thoughts or suggestions you might have for the model or implementation.
 
 https://www.linkedin.com/pulse/konzept-einer-zentralen-signaturstelle-f%25C3%25BCr-das-freitesten-jonas/
 
 ### The Corsign Token
 
-Corsign extends the default JWT Claims with a field called pld (= "payload") which contains a json structure with person data and covid19 or app relevant data.
+Corsign extends the default JWT Claims with a field called pld (= "payload") that contains a JSON structure with personally identifiable information, Covid19 relevant data, and optional third-party application data.
 An example (from the Standalone app looks like this):
 
-```
+```json
 {
   "kid": "d8cf847b-9eac-47e5-975a-e6cc87790db6",
   "alg": "RS512"
@@ -25,17 +25,17 @@ An example (from the Standalone app looks like this):
   "iss": "issuer",
   "pld": {
     "person": {
-      "birthday": 1617219803996,
-      "zip": "83022",
-      "country": "Germany",
-      "firstname": "Max",
-      "phoneNumber": "0803199999",
-      "address": "Bahnhofstraße 1",
-      "gender": "M",
-      "city": "Rosenheim",
       "idCardNumber": "LFC123ABC",
+      "firstname": "Max",
+      "lastname": "Mustermann",
+      "sex": "M",
+      "birthdate": 1617219803996,
       "email": "meine@mail.de",
-      "lastname": "Mustermann"
+      "phoneNumber": "0803199999",
+      "street": "Bahnhofstraße 1",
+      "city": "Rosenheim",
+      "zip": "83022"  ,
+      "country": "de",
     },
     "information": {
       "isNegative": true
@@ -46,43 +46,45 @@ An example (from the Standalone app looks like this):
 }
 ```
 
-The following list shows all possible fields. Most of them are optional. Please open github ticket if you think a field is missing or should be required.
+The following list shows all possible fields, most of which are optional. Please open a Github issue if you think a field is missing or should be required.
 
-```
-"sub": "uuid for the person, which can be used to identify the person in a third-party app or in SORMAS until a new Test is done",
-"exp": "The token expires after the covid19 test time is longer than a given value. e.g 24h",
-"iat": "Covid19 Test time",
-"nbf": "Valid not before Covid19 test time",
-"aud": "place for the signer, can be used to tell a third party app more informations"
-"pld": {
-    "person": {
-      "birthday": timestamp in milliseconds,
-      "zip": "zip code",
-      "firstname": "Max *required",
-      "phoneNumber": "0803199999",
-      "address": "Bahnhofstraße 1",
-      "gender": "M",
-      "city": "Rosenheim",
+```json
+{​
+  "sub": "UUID (Unique User IDentifier) which could be used in third-party applications such as SORMAS, valid until a new test is performed",
+  "exp": "The token expires after a pre-defined duration (e.g 24 hours) passed since the Sars-CoV-2 was done",
+  "iat": "Date and time of the Sars-Cov-2 test",
+  "nbf": "Valid not before Sars-Cov-2 test date and time",
+  "aud": "Place for the signer, can be used to store additional information for a third-party application",
+  "pld": {​​​
+    "person": {​​​
       "idCardNumber": "LFC123ABC",
+      "firstname": "Max *required",
+      "lastname": "Mustermann *required",
+      "sex": "F(emale)|M(ale)|D(iverse)",
+      "birthdate": "timestamp in milliseconds",
       "email": "meine@mail.de",
-      "lastname": "Mustermann *required"
-      "country": "de"
-    },
-    "information": {
+      "phoneNumber": "0803199999",
+      "street": "Bahnhofstraße 1",
+      "city": "Rosenheim",
+      "zip": "zip code",
+      "country": "2 letter Alpha-2 country code as defined in ISO 3166"
+    }​​​,
+    "information": {​​​
       "isNegative": true,
-      "isVaccinated": true|false,
-      "vaccine": "Shortname of the vaccines like BNT162b2|mRNA-1273|..."
-      "appData"
-    }
-  },
+      "isVaccinated": true,
+      "vaccine": "Shortname of the administered vaccine like BNT162b2|mRNA-1273|...",
+      "appData": "Additional third-party app data"
+    }​​​
+  }​
+}​​​
 ```
 
 ### QuickStart
 
-1) Checkout
-2) Install Scala & sbt
-3) Run ```sbt coreTest``` to test the core-features
-4) Under core/src/main/scala/coresign.core/app/Standalone is a Standalone Console Application which can be executed with ```sbt "project core; run"```. It produces a sample output like the following snippet:
+1) Clone the repository (`git clone https://github.com/innFactory/corsign-core.git`)
+2) Install Scala & sbt ([https://www.scala-sbt.org/1.x/docs/Setup.html](https://www.scala-sbt.org/1.x/docs/Setup.html))
+3) Run `sbt coreTest` to test the core-features
+4) Under core/src/main/scala/corsign/core/app/Standalone is a Standalone Console Application which can be executed with `sbt "project core; run"`. This produces a sample output like the following snippet:
 ```
 Generating a new RSA key. 06f806e2-0e19-402d-a4a0-2aca1cc80f55
 Public Key:
@@ -100,13 +102,13 @@ XQIDAQAB
 Signed Token with this Key is:
 Some(JWTToken(eyJraWQiOiIwNmY4MDZlMi0wZTE5LTQwMmQtYTRhMC0yYWNhMWNjODBmNTUiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI1MmQwN2NiZS1mZDNhLTQ4MDUtOTMyZS01YmNlNzVjZTZhMzkiLCJhdWQiOiJhdWRpZW5jZSIsIm5iZiI6MTYxNzIxODI2NSwiaXNzIjoiaXNzdWVyIiwicGxkIjp7InBlcnNvbiI6eyJiaXJ0aGRheSI6MTYxNzIxODI2NjAyMCwiemlwIjoiODMwMjIiLCJjb3VudHJ5IjoiR2VybWFueSIsImZpcnN0bmFtZSI6Ik1heCIsInBob25lTnVtYmVyIjoiMDgwMzE5OTk5OSIsImFkZHJlc3MiOiJCYWhuaG9mc3RyYcOfZSAxIiwiZ2VuZGVyIjoiTSIsImNpdHkiOiJSb3NlbmhlaW0iLCJpZENhcmROdW1iZXIiOiJMRkMxMjNBQkMiLCJlbWFpbCI6Im1laW5lQG1haWwuZGUiLCJsYXN0bmFtZSI6Ik11c3Rlcm1hbm4ifSwiaW5mb3JtYXRpb24iOnsiaXNOZWdhdGl2ZSI6dHJ1ZX19LCJleHAiOjE2MTcyMjU0NjUsImlhdCI6MTYxNzIxODI2NX0.GjCqG2ZtcrRb8dVrmrJD7b8YGEasNxLBTLT4bnM5QoOwIBB1kcKWHe6qr0Kw6NogihfCX4iAq3DQcVzJbbECvD0TQJXHb1vehb8TU7hrJta_J_Ovr7zh0BbVuZ39esPuCnaXrjiOYMWK8ZlJhVaWkgb46pfVJpWXqcaa6Vh93ZfyG-X1h-8Luwqf6AUcblICV-nVSdQ085vRr67OS0r6k2OB5vNFkLuifjD1sc32W_ofUfgHUy446Aerca0GDlhNMaRwBVx4LZJWAbXNTZmKNwLTJvRT4Cocgo4ldPWVCrwySgv__Q3ebPkjgZG36zTcOaBE5vXuwDPuNELboUI-Sg))
 
-Parsed Content from validated Token is
+Parsed content from validated token is
 JWTClaims(52d07cbe-fd3a-4805-932e-5bce75ce6a39,issuer,audience,1617225465,1617218265,1617218265,Payload(Person(Max,Mustermann,Some(M),Some(Wed Mar 31 21:17:46 CEST 2021),Some(0803199999),Some(meine@mail.de),Some(LFC123ABC),Some(Bahnhofstraße 1),Some(83022),Some(Rosenheim),Some(Germany)),CorData(Some(true),None,None)))
 {"kty":"RSA","e":"AQAB","use":"sig","kid":"06f806e2-0e19-402d-a4a0-2aca1cc80f55","alg":"RS512","n":"r_3psBufe6VAAa0HyHX7JgPtHxN-KhwUCnQ31UsdFu8kt2Y9Dn9Efw2ZF47rQdj0_fa3xal_rQVOufT3-L8ZYwLOTsF7HemoqxCEpsPrhsxoBLKpNcq2gSSRnaWueRrqzqr15fT3S6ULpN5y8wLVE869gGROzksS25sDOnOyiY34X3WqM-AYn7dqKkMnLfbhwLrHq2Q777akME5FSOOec_Re8j2n6fl2bDlynjxuI_HbnTrufOjabn7AqqiUpnNbQceQSgKs6bZ-Wv7PjHT09lYLYDpEJ80Nm7_alSNWtP3Ybg6Bjqt31p9R3_pH1hemDFlhUDE71lUisJDPZ-ggXQ"}
 
 Now try to sign with a Deserialized PEM Key
 
-Second JWT Token is:
+The second JWT Token is:
 Some(JWTToken(eyJraWQiOiI3MWUwNzAzNS1jZWIxLTQ1N2QtODUyMS1kYzRiNTAzMmI1NzAiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI1MmQwN2NiZS1mZDNhLTQ4MDUtOTMyZS01YmNlNzVjZTZhMzkiLCJhdWQiOiJhdWRpZW5jZSIsIm5iZiI6MTYxNzIxODI2NSwiaXNzIjoiaXNzdWVyIiwicGxkIjp7InBlcnNvbiI6eyJiaXJ0aGRheSI6MTYxNzIxODI2NjAyMCwiemlwIjoiODMwMjIiLCJjb3VudHJ5IjoiR2VybWFueSIsImZpcnN0bmFtZSI6Ik1heCIsInBob25lTnVtYmVyIjoiMDgwMzE5OTk5OSIsImFkZHJlc3MiOiJCYWhuaG9mc3RyYcOfZSAxIiwiZ2VuZGVyIjoiTSIsImNpdHkiOiJSb3NlbmhlaW0iLCJpZENhcmROdW1iZXIiOiJMRkMxMjNBQkMiLCJlbWFpbCI6Im1laW5lQG1haWwuZGUiLCJsYXN0bmFtZSI6Ik11c3Rlcm1hbm4ifSwiaW5mb3JtYXRpb24iOnsiaXNOZWdhdGl2ZSI6dHJ1ZX19LCJleHAiOjE2MTcyMjU0NjUsImlhdCI6MTYxNzIxODI2NX0.my8hZOn_BmOaD2h1fG96HAJ-pbvNiMi5yrWK9s1B3cGAYsG5Ud03V1pXvO1ll5qspRy45hMTOK9HF0zinxswtv3B5GhyE-DHbzCO5NvgAfIeD9trI6gDSq6F0jgXgXphVV5NmYoWn5QlwwoaURaDbU1LDDy-UiUhjDOdZk63qqTxqXaigriedFjdRui96Ll6pxYJEV1MeM_YgSjdftPEM6qIYYW_9Ga7jZxnU9fLnME7LlIVfMgRmXB9sF88RlYgbiBXJYjkf2lJ0KUD92pnWeY8XY2Jw-77Ev7MK0KMEqfhIwNGOZSn5cNxDWlZHUpEqpQB8s22Oi8pMShH6Xcg6g))
 
 Private Key Hash for Signing Endpoint
@@ -120,23 +122,23 @@ Process finished with exit code 0
 
 ```
 
-The generated QR Code contains a signed JWT Token, which is redirected to a local url. Right now we are building a server extension so that the corsign model can be validated under corsign.de/v1/validation/:token.
+The generated QR-Code contains a signed JWT Token, which redirects to a local URL. Right now we are building a server extension so that the Corsign model can be validated under `corsign.de/v1/validation/:token`.
 This service will also manage all keys for customers and stores them encrypted with AES256. You must provide the SHA512 hash of the private key to decrypt the keys and sign your request.
 
-![signed qr ](doc/sample-qr-code.png "Signed QR Code")
+![Signed QR](doc/sample-qr-code.png "Signed QR-Code")
 
-So if you now scan the QR Code you'll get redirected to a local page (subfolder: validation-ui) which generates one of the following result:
+So if you now scan the QR-Code you'll get redirected to a local page (subfolder: validation-ui) which generates one of the following results:
 
-Negativ gescannte Person in der Beispiel WebApp             |  Positiv gescannte Person
-:-------------------------:|:-------------------------:
-![valid signed qr ](doc/valid.png "Valid QR Code") | ![invalid signed qr ](doc/invalid.png "Invalid QR Code")
+|  Negativ gescannte Person in der Beispiel WebApp   |                 Positiv gescannte Person                 |
+| :------------------------------------------------: | :------------------------------------------------------: |
+| ![valid signed qr ](doc/valid.png "Valid QR-Code") | ![invalid signed qr ](doc/invalid.png "Invalid QR-Code") |
 
-Because of the open data, any QR Code Reader can parse the content and split the data from the /validation/ inside of the url. After that the token can be used in any application like SORMAS, Luca App, Corona Warn App and many more. We also plan to provide a reference implementation of a tracing and a teststation app. For the teststation use case we'll use our product [CoTeMa](https://innfactory.de/products/cotema-corona-terminvereinbarung/terminvereinbarungssoftware-fuer-corona-teststationen-und-impfzentren-impfzentren-software?utm_source=github&utm_medium=web&utm_campaign=redirect) which was originally developed for the rosenheim covid19 teststation and then adapted for vaccination process.
+Because of the open data, any QR Code Reader can parse the content and split the data from the /validation/ inside of the url. After that the token can be used in any application like SORMAS, Luca App, Corona Warn App, and many more. We also plan to provide a reference implementation of a tracing and a test station app. For the test station use case we'll use our product [CoTeMa](https://innfactory.de/products/cotema-corona-terminvereinbarung/terminvereinbarungssoftware-fuer-corona-teststationen-und-impfzentren-impfzentren-software?utm_source=github&utm_medium=web&utm_campaign=redirect) which was originally developed for the Rosenheim Covid-19 test station and then adapted for vaccine administration process.
 
 ### Corsign.de
-Corsign.de will be an software as a service extensions for governments which is hosted by [innFactory GmbH](https://innfactory.de). On-Prem usage will also be possible with docker. A example flow could look like this:
+Corsign.de will be a Software as a Service (SaaS) extension for governments hosted by [innFactory GmbH](https://innfactory.de). On-Premise usage will also be possible with docker. An example flow could look like this:
 
-![flow ](doc/konzept-signing.png "signing")
+![flow](doc/konzept-signing.png "signing")
 
 ### Credits
 - [Tobias Jonas @ innFactory](https://innfactory.de)
