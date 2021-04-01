@@ -10,7 +10,7 @@ https://www.linkedin.com/pulse/konzept-einer-zentralen-signaturstelle-f%25C3%25B
 
 ### The Corsign Token
 
-Corsign extends the default JWT Claims with a field called pld (= "payload") that contains a JSON structure with personally identifiable information, Covid19 relevant data, and optional third-party application data.
+Corsign extends the default JWT Claims with a field called pld (= "payload") containing a JSON structure with personally identifiable information, Covid19 relevant data, and optional third-party application data.
 An example (from the Standalone app looks like this):
 
 ```json
@@ -46,7 +46,7 @@ An example (from the Standalone app looks like this):
 }
 ```
 
-The following list shows all possible fields, most of which are optional. Please open a Github issue if you think a field is missing or should be required.
+The following list shows all possible fields, most of which are optional. Please [open a Github issue](https://github.com/innFactory/corsign-core/issues/new) if you think a field is missing or should be required.
 
 ```json
 {​
@@ -71,6 +71,7 @@ The following list shows all possible fields, most of which are optional. Please
     }​​​,
     "information": {​​​
       "isNegative": true,
+      "testType": "Type of test used e.g. pcr|antigen|...",
       "isVaccinated": true,
       "vaccine": "Shortname of the administered vaccine like BNT162b2|mRNA-1273|...",
       "appData": "Additional third-party app data"
