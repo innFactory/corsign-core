@@ -58,7 +58,6 @@ The following list shows all possible fields. Most of them are optional. Please 
     "person": {
       "birthday": timestamp in milliseconds,
       "zip": "zip code",
-      "country": "Germany",
       "firstname": "Max *required",
       "phoneNumber": "0803199999",
       "address": "Bahnhofstraße 1",
@@ -135,7 +134,7 @@ Negativ gescannte Person in der Beispiel WebApp             |  Positiv gescannte
 Because of the open data, any QR Code Reader can parse the content and split the data from the /validation/ inside of the url. After that the token can be used in any application like SORMAS, Luca App, Corona Warn App and many more. We also plan to provide a reference implementation of a tracing and a teststation app. For the teststation use case we'll use our product [CoTeMa](https://innfactory.de/products/cotema-corona-terminvereinbarung/terminvereinbarungssoftware-fuer-corona-teststationen-und-impfzentren-impfzentren-software?utm_source=github&utm_medium=web&utm_campaign=redirect) which was originally developed for the rosenheim covid19 teststation and then adapted for vaccination process.
 
 ### Corsign.de
-Corsign.de will be an software as a service extensions for governments which is hosted by [innFactory GmbH](https://innfactory.de]. On-Prem usage will also be possible with docker. A example flow could look like this:
+Corsign.de will be an software as a service extensions for governments which is hosted by [innFactory GmbH](https://innfactory.de). On-Prem usage will also be possible with docker. A example flow could look like this:
 
 ![flow ](doc/konzept-signing.png "signing")
 
