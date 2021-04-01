@@ -1,14 +1,40 @@
+
 val appName    = "corsign-core"
-val libVersion = "0.1.0"
+val libVersion = "0.1.1"
 val scVersion  = "2.13.5"
+
+name := appName
+
+val token = sys.env.getOrElse("GITHUB_TOKEN", "")
+
+credentials :=
+  Seq(
+    Credentials(
+      "GitHub Package Registry",
+      "maven.pkg.github.com",
+      "innFactory",
+      token
+    )
+  )
+
+val defaultProjectSettings = Seq(
+  scalaVersion := scVersion,
+  organization := "de.innfactory.corsign-core",
+  version := libVersion,
+  githubOwner := "innFactory",
+  githubRepository := appName,
+  githubTokenSource := TokenSource.GitConfig("github.token") || TokenSource.Environment("GITHUB_TOKEN")
+)
 
 lazy val core = project
   .in(file("core"))
   .settings(
+    defaultProjectSettings,
+    name := "core",
     inThisBuild(
       List(
         resolvers += "jitpack" at "https://jitpack.io",
-        name := appName,
+        name := "core",
         organization := "innFactory",
         version := libVersion,
         scalaVersion := scVersion,
@@ -31,6 +57,8 @@ lazy val core = project
 
 lazy val corsign = project
   .in(file("."))
+  .settings(defaultProjectSettings)
   .dependsOn(core)
+  .aggregate(core)
 
 addCommandAlias("coreTest",";project core; clean; coverage ;test ;coverageReport")
