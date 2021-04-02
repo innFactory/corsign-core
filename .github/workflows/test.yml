@@ -22,5 +22,7 @@ jobs:
       - name: Run tests
         run: |
           sbt coreTest
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLIC_GITHUB_TOKEN }}
 
 
