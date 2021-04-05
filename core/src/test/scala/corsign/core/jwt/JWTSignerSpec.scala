@@ -2,7 +2,7 @@ package corsign.core.jwt
 
 import corsign.core.app.Standalone.{ key, token }
 import corsign.core.model.{ CorData, Payload, Person }
-import corsign.core.model.Person.Gender.MALE
+import corsign.core.model.Person.Sex.MALE
 import corsign.core.rsa.RSAKey
 import corsign.core.validation.SimpleRSAValidator
 import org.scalatest.matchers.should.Matchers
@@ -22,7 +22,7 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
   val person  = Person(
     firstname = "Max",
     lastname = "Mustermann",
-    gender = Some(MALE),
+    sex = Some(MALE),
     birthday = Some(Date.from(Instant.now())),
     phoneNumber = Some("0803199999"),
     email = Some("meine@mail.de"),

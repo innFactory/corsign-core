@@ -1,7 +1,7 @@
 package corsign.core.app
 // $COVERAGE-OFF$
 import corsign.core.jwt.{ JWTClaims, JWTSigner }
-import corsign.core.model.Person.Gender.MALE
+import corsign.core.model.Person.Sex.MALE
 import corsign.core.model.{ CorData, Payload, Person }
 import corsign.core.qr.{ B64QRCode, QRData }
 import corsign.core.rsa.RSAKey
@@ -26,7 +26,7 @@ object Standalone extends App {
   val person  = Person(
     firstname = "Max",
     lastname = "Mustermann",
-    gender = Some(MALE),
+    sex = Some(MALE),
     birthday = Some(Date.from(Instant.now())),
     phoneNumber = Some("0803199999"),
     email = Some("meine@mail.de"),

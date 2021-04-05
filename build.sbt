@@ -1,6 +1,6 @@
 
 val appName    = "corsign-core"
-val libVersion = "0.1.1"
+val libVersion = "1.0.0"
 val scVersion  = "2.13.5"
 
 name := appName

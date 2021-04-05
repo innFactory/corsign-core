@@ -13,7 +13,7 @@ https://www.linkedin.com/pulse/konzept-einer-zentralen-signaturstelle-f%25C3%25B
 Corsign extends the default JWT Claims with a field called pld (= "payload") containing a JSON structure with personally identifiable information, Covid19 relevant data, and optional third-party application data.
 An example (from the Standalone app looks like this):
 
-```json
+```jwt
 {
   "kid": "d8cf847b-9eac-47e5-975a-e6cc87790db6",
   "alg": "RS512"
@@ -49,35 +49,36 @@ An example (from the Standalone app looks like this):
 The following list shows all possible fields, most of which are optional. Please [open a Github issue](https://github.com/innFactory/corsign-core/issues/new) if you think a field is missing or should be required.
 
 ```json
-{​
+{
   "sub": "UUID (Unique User IDentifier) which could be used in third-party applications such as SORMAS, valid until a new test is performed",
   "exp": "The token expires after a pre-defined duration (e.g 24 hours) passed since the Sars-CoV-2 was done",
   "iat": "Date and time of the Sars-Cov-2 test",
   "nbf": "Valid not before Sars-Cov-2 test date and time",
   "aud": "Place for the signer, can be used to store additional information for a third-party application",
-  "pld": {​​​
-    "person": {​​​
+  "pld": {
+    "person": {
       "idCardNumber": "LFC123ABC",
       "firstname": "Max *required",
       "lastname": "Mustermann *required",
-      "sex": "F(emale)|M(ale)|D(iverse)",
+      "sex": "F(emale)|M(ale)|D(ivers)",
       "birthdate": "timestamp in milliseconds",
-      "email": "meine@mail.de",
-      "phoneNumber": "0803199999",
+      "email": "meine@mail.de *required or phoneNumber", 
+      "phoneNumber": "0803199999 *required or E-Mail",
       "street": "Bahnhofstraße 1",
       "city": "Rosenheim",
       "zip": "zip code",
       "country": "2 letter Alpha-2 country code as defined in ISO 3166"
-    }​​​,
-    "information": {​​​
+    },
+    "information": {
       "isNegative": true,
       "testType": "Type of test used e.g. pcr|antigen|...",
       "isVaccinated": true,
       "vaccine": "Shortname of the administered vaccine like BNT162b2|mRNA-1273|...",
-      "appData": "Additional third-party app data"
-    }​​​
-  }​
-}​​​
+      "appData1": "Additional third-party app data as json",
+      "appData2": "Additional third-party app data as json"
+    }
+  }
+}
 ```
 
 ### QuickStart

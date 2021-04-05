@@ -1,12 +1,14 @@
 package corsign.core.model
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 case class CorData(
-  isNegative: Option[Boolean] = None,
-  isVaccinated: Option[Boolean] = None,
-  vaccine: Option[String] = None,
-  appData: Option[String] = None
+                    isNegative: Option[Boolean] = None,
+                    testType: Option[String] = None,
+                    isVaccinated: Option[Boolean] = None,
+                    vaccine: Option[String] = None,
+                    appData1: Option[JsValue] = None,
+                    appData2: Option[JsValue] = None
 )
 
 object CorData {
