@@ -21,18 +21,18 @@ object Standalone extends App {
   println(key.publicKeyPEM)
 
   val now      = Instant.now
-  val validity = Instant.now.plusMillis(2.hours.toMillis)
+  val validity = Instant.now.plusMillis(1000.days.toMillis)
 
   val person  = Person(
     firstname = "Max",
     lastname = "Mustermann",
     sex = Some(MALE),
-    birthday = Some(Date.from(Instant.now())),
+    birthday = Some(Date.from(Instant.now().minusSeconds(756844000))),
     phoneNumber = Some("0803199999"),
-    email = Some("meine@mail.de"),
+    email = Some("max@mustermann.de"),
     idCardNumber = Some("LFC123ABC"),
-    street1 = Some("Bahnhofstraße 1"),
-    street2 = Some("Bahnhofstraße 1"),
+    street1 = Some("Eduard-Rüber-Str. 7"),
+    street2 = Some("c/o innFactory GmbH"),
     zip = Some("83022"),
     city = Some("Rosenheim"),
     country = Some("Germany")
@@ -41,8 +41,8 @@ object Standalone extends App {
 
   val claims = JWTClaims(
     UUID.randomUUID(),
-    "issuer",
-    "audience",
+    "https://iss.corsign.de/",
+    "test",
     validity.getEpochSecond,
     now.getEpochSecond,
     now.getEpochSecond,
@@ -67,7 +67,7 @@ object Standalone extends App {
 
   println("\n\nNow generating a QR Code")
 
-  val url = s"http://localhost:5000/v1/validate/${token.get.value}"
+  val url = s"https://corsign.de/v1/validate/${token.get.value}"
   println(B64QRCode().generate(QRData(url)))
 }
 // $COVERAGE-ON$
