@@ -12,7 +12,8 @@ case class Person(
                    phoneNumber: Option[String] = None,
                    email: Option[String] = None,
                    idCardNumber: Option[String] = None,
-                   address: Option[String] = None,
+                   street1: Option[String] = None,
+                   street2: Option[String] = None,
                    zip: Option[String] = None,
                    city: Option[String] = None,
                    country: Option[String] = None

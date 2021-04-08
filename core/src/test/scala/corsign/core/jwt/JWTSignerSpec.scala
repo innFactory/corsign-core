@@ -27,7 +27,8 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
     phoneNumber = Some("0803199999"),
     email = Some("meine@mail.de"),
     idCardNumber = Some("LFC123ABC"),
-    address = Some("Bahnhofstraße 1"),
+    street1 = Some("Bahnhofstraße 1"),
+    street2 = Some("c/o innFactory"),
     zip = Some("83022"),
     city = Some("Rosenheim"),
     country = Some("Germany")
