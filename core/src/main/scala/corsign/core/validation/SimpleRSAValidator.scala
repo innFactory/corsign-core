@@ -13,10 +13,12 @@ object SimpleRSAValidator {
     Try {
       if (signedJWT.verify(verifier))
         Some(JWTClaims.fromNimbus(signedJWT))
-      else None
+      else {
+        None
+      };
     } match {
       case Success(value)     => value
-      case Failure(exception) => println(exception); None
+      case Failure(_) => None
     }
   }
 }

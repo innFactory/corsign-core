@@ -16,9 +16,13 @@ object Standalone extends App {
   val uuid = UUID.randomUUID()
   println(s"Generating a new RSA key. $uuid")
   val key  = RSAKey.generateNewRSAKey(Some(uuid))
+  val key2  = RSAKey.generateNewRSAKey(Some(uuid))
 
+  println("Private Key:")
+  println(key.privateKeyPEM)
   println("Public Key:")
   println(key.publicKeyPEM)
+
 
   val now      = Instant.now
   val validity = Instant.now.plusMillis(1000.days.toMillis)
@@ -62,8 +66,12 @@ object Standalone extends App {
   println("\nThe second JWT Token is:")
   println(token2)
 
+  println("\nInvalid JWT validation (wrong key):")
+  println(SimpleRSAValidator.validateWithRSA(token2.get, key2))
+
   println("\nPrivate Key Hash for signing endpoint:")
   println(key.privateKeySHA512)
+
 
   println("\n\nNow generating a QR Code")
 
