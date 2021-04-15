@@ -9,12 +9,11 @@ import com.nimbusds.jwt.{ JWTClaimsSet, SignedJWT }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-
+import corsign.core.validation.utils.RightMap._
 import java.security.{ KeyPair, KeyPairGenerator }
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
-import scala.util.Either
 
 /**
  * Some parts of these tests code is inspired and/or copy/paste from Nimbus tests code. The Base of this Validator Spec comes from an Open Source implementation of JWK Validation.
@@ -423,12 +422,5 @@ class ConfigurableJWTValidatorSpec extends AnyWordSpec with Matchers with ScalaC
     }
   }
 
-  private implicit class EitherCompat[A, B](either: Either[A, B]) {
-    //Scala 2.13 deprecates either.right.map, but Scala 2.11 isn't right-biased yet. This removes the deprecation warning.
-    def rightMap[B1](f: B => B1): Either[A, B1] =
-      either match {
-        case Right(value) => Right(f(value))
-        case Left(value)  => Left(value)
-      }
-  }
+
 }
