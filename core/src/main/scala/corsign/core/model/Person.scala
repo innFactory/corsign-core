@@ -2,13 +2,14 @@ package corsign.core.model
 
 import play.api.libs.json.Json
 
-import java.util.{ Date, UUID }
+import java.time.LocalDate
+import java.util.{Date, UUID}
 
 case class Person(
                    firstname: String,
                    lastname: String,
                    sex: Option[String] = None,
-                   birthday: Option[Date] = None,
+                   birthday: Option[LocalDate] = None,
                    phoneNumber: Option[String] = None,
                    email: Option[String] = None,
                    idCardNumber: Option[String] = None,

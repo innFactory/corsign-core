@@ -1,7 +1,7 @@
 package corsign.core.jwt
 
-import corsign.core.app.Standalone.{ key, token }
-import corsign.core.model.{ CorData, Payload, Person }
+import corsign.core.app.Standalone.{key, token}
+import corsign.core.model.{CorData, Payload, Person}
 import corsign.core.model.Person.Sex.MALE
 import corsign.core.rsa.RSAKey
 import corsign.core.validation.SimpleRSAValidator
@@ -10,8 +10,8 @@ import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import java.time.Instant
-import java.util.{ Date, UUID }
+import java.time.{Instant, LocalDate}
+import java.util.{Date, UUID}
 
 class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks {
   import JWTClaims._
@@ -23,7 +23,7 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
     firstname = "Max",
     lastname = "Mustermann",
     sex = Some(MALE),
-    birthday = Some(Date.from(Instant.now())),
+    birthday = Some(LocalDate.of(1999,2,3)),
     phoneNumber = Some("0803199999"),
     email = Some("meine@mail.de"),
     idCardNumber = Some("LFC123ABC"),

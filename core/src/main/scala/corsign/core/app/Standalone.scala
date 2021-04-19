@@ -1,14 +1,14 @@
 package corsign.core.app
 // $COVERAGE-OFF$
-import corsign.core.jwt.{ JWTClaims, JWTSigner }
+import corsign.core.jwt.{JWTClaims, JWTSigner}
 import corsign.core.model.Person.Sex.MALE
-import corsign.core.model.{ CorData, Payload, Person }
-import corsign.core.qr.{ B64QRCode, QRData }
+import corsign.core.model.{CorData, Payload, Person}
+import corsign.core.qr.{B64QRCode, QRData}
 import corsign.core.rsa.RSAKey
 import corsign.core.validation.SimpleRSAValidator
 
-import java.time.Instant
-import java.util.{ Date, UUID }
+import java.time.{Instant, LocalDate}
+import java.util.{Date, UUID}
 import scala.concurrent.duration.DurationInt
 
 object Standalone extends App {
@@ -31,7 +31,7 @@ object Standalone extends App {
     firstname = "Max",
     lastname = "Mustermann",
     sex = Some(MALE),
-    birthday = Some(Date.from(Instant.now().minusSeconds(756844000))),
+    birthday = Some(LocalDate.of(1999,2,3)),
     phoneNumber = Some("0803199999"),
     email = Some("max@mustermann.de"),
     idCardNumber = Some("LFC123ABC"),

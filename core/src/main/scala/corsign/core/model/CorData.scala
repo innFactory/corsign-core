@@ -5,6 +5,7 @@ import play.api.libs.json.{JsValue, Json}
 case class CorData(
                     isNegative: Option[Boolean] = None,
                     testType: Option[String] = None,
+                    testId: Option[String] = None,
                     isVaccinated: Option[Boolean] = None,
                     vaccine: Option[String] = None,
                     appData1: Option[JsValue] = None,
