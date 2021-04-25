@@ -2,52 +2,55 @@
 
 ### What is Corsign?
 Corona Signing or Corsign is a method of storing all Covid-19 relevant data inside of a signed QR-Code which can be used by any application. The signer in this case would not need to store any personal information inside the signing system.
-Because of the open JWT format, the result can be interpreted in ANY Covid-19 related app. The cryptographic methods behind the token signing process are all open source and battle proof.
+Because of the open JWT format (RFC 7519), the result can be interpreted in ANY Covid-19 related app. The cryptographic methods behind the token signing process are all open source and battle proof. Offline validation is also possible because of the JWKs (RFC 7517) Remote Sources in our SaaS implementation. So every tracing app is able to read the QR Code take the needed information and check the signing offline (or online via API call).
 
 I have written about this idea on LinkedIn. Don't hesitate to call or write about any thoughts or suggestions you might have for the model or implementation.
 
 https://www.linkedin.com/pulse/konzept-einer-zentralen-signaturstelle-f%25C3%25BCr-das-freitesten-jonas/
 
+Our own implementation of this PKI System (corsign.de) is described in headline "corsign.de". 
+
 ### The Corsign Token
 
 Corsign extends the default JWT Claims with a field called pld (= "payload") containing a JSON structure with personally identifiable information, Covid19 relevant data, and optional third-party application data.
-An example (from the Standalone app looks like this):
+An example (from our dev issuer https://dev-iss.corsign.de):
+
+
+```
+eyJraWQiOiI1MzUzYTgzMS0yMmIzLTQwNmUtYWYzMy1jN2NiZjIyNmJjMGQiLCJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI3YzEwOTA1ZC05ZWQ4LTQ2YWEtOTc3MS1lNzBiYWU1ODYzYjAiLCJhdWQiOiJUZXN0emVudHJ1bSBMb3JldHRvd2llc2UgW3Rlc3QuY29yb25hdGVzdC5iYXllcm5dIiwibmJmIjoxNjE5MzQwMDg2LCJpc3MiOiJodHRwczpcL1wvZGV2LWlzcy5jb3JzaWduLmRlIiwicGxkIjp7InBlcnNvbiI6eyJiaXJ0aGRheSI6IjE5OTItMDMtMDIiLCJ6aXAiOiI4MzAyMiIsImNvdW50cnkiOiJERSIsImZpcnN0bmFtZSI6Ik1heCIsInBob25lTnVtYmVyIjoiMDgwMzE1ODU4NTgiLCJjaXR5IjoiUm9zZW5oZWltIiwic2V4IjoiTSIsImlkQ2FyZE51bWJlciI6IkxGQzEyM0FCQyIsInN0cmVldDEiOiJCYWhuaG9mc3RyYcOfZSAxIiwiZW1haWwiOiJtZWluZUBtYWlsLmRlIiwibGFzdG5hbWUiOiJNdXN0ZXJtYW5uIn0sImluZm9ybWF0aW9uIjp7ImlzTmVnYXRpdmUiOnRydWUsInRlc3RUeXBlIjoiUENSIn19LCJleHAiOjE2MTk2ODU2ODYsImlhdCI6MTYxOTM0MDA4Nn0.cF8VqWI4wZft0X75iNUIL40jbGXAhpypi9KeT9l_nORmH_HAm569PIdFU-E3gTzLiVTrnQfTS1JGRytYL0y-4LbW8FRXrHkB3Af8VQeVKkhv3LkqUmOBgdY6zPwnwhwDAoBX2s4vVzoS0JEXnn_UPMnR_sqBNOeS96VAN6pf-vtBLM4l967XCaFYr7Qp84AIkM-YBeDmJbYFUcMcu3qQNu871Ixmdtiq1i2ImVHNhtUxTZrAzpUH4SI8JL4o7uIMGjRA5bgT67IV3CISoSlUFUyOgoHOMpcm6pDsfAylmvWqFfzh3gctkxwQzMHOyoStaDjAObBQ74UgCtS2CxsnGw
+```
 
 ```jwt
 {
-  "kid": "d8cf847b-9eac-47e5-975a-e6cc87790db6",
-  "alg": "RS512"
-}
-{
-  "sub": "1d32bce5-f0fb-483b-b389-c97af0fd4ff7",
-  "aud": "audience",
-  "nbf": 1617219803,
-  "iss": "issuer",
+  "sub": "7c10905d-9ed8-46aa-9771-e70bae5863b0",
+  "aud": "Testzentrum Lorettowiese [test.coronatest.bayern]",
+  "nbf": 1619340086,
+  "iss": "https://dev-iss.corsign.de",
   "pld": {
     "person": {
-      "idCardNumber": "LFC123ABC",
+      "birthday": "1992-03-02",
+      "zip": "83022",
+      "country": "DE",
       "firstname": "Max",
-      "lastname": "Mustermann",
-      "sex": "M",
-      "birthdate": "1999-02-03",
-      "email": "meine@mail.de",
-      "phoneNumber": "0803199999",
-      "street1": "Bahnhofstraße 1",
-      "street2": "",
+      "phoneNumber": "08031585858",
       "city": "Rosenheim",
-      "zip": "83022"  ,
-      "country": "de",
+      "sex": "M",
+      "idCardNumber": "LFC123ABC",
+      "street1": "Bahnhofstraße 1",
+      "email": "meine@mail.de",
+      "lastname": "Mustermann"
     },
     "information": {
-      "isNegative": true
+      "isNegative": true,
+      "testType": "PCR"
     }
   },
-  "exp": 1617227003,
-  "iat": 1617219803
+  "exp": 1619685686,
+  "iat": 1619340086
 }
 ```
 
-The following list shows all possible fields, most of which are optional. Please [open a Github issue](https://github.com/innFactory/corsign-core/issues/new) if you think a field is missing or should be required.
+The following list shows all possible fields, most of them are optional. Please [open a Github issue](https://github.com/innFactory/corsign-core/issues/new) if you think a field is missing or should be required. If you don't need the information just ignore the other fields.
 
 ```json
 {
@@ -141,11 +144,24 @@ So if you now scan the QR-Code you'll get redirected to a local page (subfolder:
 Because of the open data, any QR Code Reader can parse the content and split the data from the /validation/ inside of the url. After that the token can be used in any application like SORMAS, Luca App, Corona Warn App, and many more. We also plan to provide a reference implementation of a tracing and a test station app. For the test station use case we'll use our product [CoTeMa](https://innfactory.de/products/cotema-corona-terminvereinbarung/terminvereinbarungssoftware-fuer-corona-teststationen-und-impfzentren-impfzentren-software?utm_source=github&utm_medium=web&utm_campaign=redirect) which was originally developed for the Rosenheim Covid-19 test station and then adapted for vaccine administration process.
 
 ### Corsign.de
-Corsign.de will be a Software as a Service (SaaS) extension for governments hosted by [innFactory GmbH](https://innfactory.de). On-Premise usage will also be possible with docker. An example flow could look like this:
 
+![connects](doc/corsign-connects.png "connects")
+
+Corsign.de is a Software as a Service (SaaS) extension for governments hosted by [innFactory GmbH](https://innfactory.de). Third Party Teststation Software can integrate the API for signing a jwt and the Tracing Apps can integrate the counterpart API for validation. Signing and Validation can also be done offline, because corsign.de offers a JWKs well-known file which contains all of the public keys. 
+
+
+An example flow looks like this:
 ![flow](doc/corsign-concept.png "signing")
 
 API Docs for corsign.de issuer: https://github.com/innFactory/corsign-api
+
+- Production issuer: https://iss.corsign.de
+- Development issuer: https://dev-iss.corsign.de
+
+Write me, if you need more information about integration or credentials for the dev environment. 
+
+
+
 
 ### Credits
 - [Tobias Jonas @ innFactory](https://innfactory.de)
