@@ -50,6 +50,8 @@ eyJraWQiOiI1MzUzYTgzMS0yMmIzLTQwNmUtYWYzMy1jN2NiZjIyNmJjMGQiLCJhbGciOiJSUzUxMiJ9
 }
 ```
 
+or as [PDF Result](doc/Testergebnis-1619340086.pdf) for printing.
+
 The following list shows all possible fields, most of them are optional. Please [open a Github issue](https://github.com/innFactory/corsign-core/issues/new) if you think a field is missing or should be required. If you don't need the information just ignore the other fields.
 
 ```json
@@ -159,8 +161,6 @@ API Docs for corsign.de issuer: https://github.com/innFactory/corsign-api
 - Development issuer: https://dev-iss.corsign.de
 
 Write me, if you need more information about integration or credentials for the dev environment. 
-
-
 
 
 ### Credits
