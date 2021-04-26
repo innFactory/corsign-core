@@ -9,7 +9,7 @@ case class Person(
                    firstname: String,
                    lastname: String,
                    sex: Option[String] = None,
-                   birthday: Option[LocalDate] = None,
+                   birthday: LocalDate,
                    phoneNumber: Option[String] = None,
                    email: Option[String] = None,
                    idCardNumber: Option[String] = None,

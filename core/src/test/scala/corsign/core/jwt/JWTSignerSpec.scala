@@ -23,7 +23,7 @@ class JWTSignerSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChe
     firstname = "Max",
     lastname = "Mustermann",
     sex = Some(MALE),
-    birthday = Some(LocalDate.of(1999,2,3)),
+    birthday = LocalDate.of(1999,2,3),
     phoneNumber = Some("0803199999"),
     email = Some("meine@mail.de"),
     idCardNumber = Some("LFC123ABC"),
