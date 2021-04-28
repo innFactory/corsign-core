@@ -7,6 +7,7 @@ case class CorData(
                     testType: Option[String] = None,
                     testId: Option[String] = None,
                     isVaccinated: Option[Boolean] = None,
+                    isImmune: Option[Boolean] = None,
                     vaccine: Option[String] = None,
                     appData1: Option[JsValue] = None,
                     appData2: Option[JsValue] = None
